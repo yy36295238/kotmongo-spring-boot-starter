@@ -107,4 +107,6 @@ public interface MongoManager extends BaseMongoManager {
 
     long count(String collection);
 
+    MongoManager showSql();
+
 }

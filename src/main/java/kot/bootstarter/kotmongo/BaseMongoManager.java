@@ -35,6 +35,8 @@ public interface BaseMongoManager {
 
     MongoManager in(String key, Collection<?> value);
 
+    MongoManager nin(String key, Object value);
+
     MongoManager nin(String key, Object[] value);
 
     MongoManager nin(String key, Collection<?> value);

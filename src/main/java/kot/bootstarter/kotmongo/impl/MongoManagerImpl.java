@@ -43,6 +43,7 @@ public class MongoManagerImpl implements MongoManager {
 
     private Query query = new Query();
     private Update update = new Update();
+    private boolean showSql = false;
 
     /**
      * 创建对象
@@ -156,6 +157,15 @@ public class MongoManagerImpl implements MongoManager {
         return mongoTemplate.count(query(), collection);
     }
 
+    @Override
+    public MongoManager showSql() {
+        if (showSql) {
+            System.err.println("sql: " + query.toString());
+        }
+        showSql = true;
+        return this;
+    }
+
     private Query query() {
         return query(null);
     }
@@ -164,6 +174,9 @@ public class MongoManagerImpl implements MongoManager {
         this.fieldsQuery().getQueryByConditionMap().sort();
         if (obj != null) {
             getQueryByBean(obj);
+        }
+        if (showSql) {
+            showSql();
         }
         return query;
     }
@@ -340,6 +353,11 @@ public class MongoManagerImpl implements MongoManager {
     public MongoManager in(String key, Collection<?> value) {
         (inMap = (inMap == null ? new HashMap<>() : inMap)).put(key, value);
         return this;
+    }
+
+    @Override
+    public MongoManager nin(String key, Object value) {
+        return nin(key, Collections.singletonList(value));
     }
 
     @Override
