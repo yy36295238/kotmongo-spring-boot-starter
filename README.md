@@ -1,7 +1,10 @@
 # kotmongo
-在MongoTemplate进行封装，spring-boot-starter-data-mongodb
 
 ### 这是一个springboot-starter项目
+
+###### 在MongoTemplate进行封装，spring-boot-starter-data-mongodb
+注意：springboot-2.0以上版本
+
 
 [使用步骤]
 
