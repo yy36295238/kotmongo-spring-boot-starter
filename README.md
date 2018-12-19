@@ -43,13 +43,16 @@ System.err.println("findOne by collection: " + map);
 final UserInfo one = kotMongoTemplate.createMangoManager().findOne(new UserInfo());
 System.err.println("findOne by bean: " + one.toString());
 
-// 条件分页查询
+// 条件分页查询        
 kotMongoTemplate.createMangoManager()
-        .between("age", 18, 30) // 范围查询
-        .orderBy("_id").direction(Sort.Direction.DESC) // 排序
-        .page(RandomUtils.nextInt(0, 10), RandomUtils.nextInt(1, 10)) // 分页
-        .findPage(new UserInfo())
-        .forEach(u-> System.out.println(u.toString()));
+                .between("age", 0, 100) //范围查询
+                .lte("score1",100) // 小于
+                .gt("score1",0) // 大于
+                .orderBy("_id").direction(Sort.Direction.DESC) // 排序
+                .page(1,10) // 分页
+                .fields(Arrays.asList("userName","age","score1","score2")) // 返回指定字段
+                .showSql() // 显示执行命令（类似SQL）
+                .findPage(new UserInfo("zhangsan156")).forEach(u -> System.out.println(u.toString()));
         
 // 更新文档        
 kotMongoTemplate.createMangoManager().eq("userName","zhangsan1").update(UserInfo.builder().userName("zhangsan125").build());
