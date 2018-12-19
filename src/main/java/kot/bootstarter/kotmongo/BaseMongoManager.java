@@ -31,6 +31,8 @@ public interface BaseMongoManager {
 
     MongoManager neq(String key, Object value);
 
+    MongoManager in(String key, Object value);
+
     MongoManager in(String key, Object[] value);
 
     MongoManager in(String key, Collection<?> value);

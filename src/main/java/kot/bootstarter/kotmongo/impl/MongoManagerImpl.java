@@ -344,6 +344,11 @@ public class MongoManagerImpl implements MongoManager {
     }
 
     @Override
+    public MongoManager in(String key, Object value) {
+        return in(key,Arrays.asList(value));
+    }
+
+    @Override
     public MongoManager in(String key, Object[] value) {
         in(key, Arrays.asList(value));
         return this;
