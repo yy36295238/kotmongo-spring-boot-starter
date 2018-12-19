@@ -2,7 +2,7 @@
 
 ### 这是一个springboot-starter项目
 
-###### 在MongoTemplate进行封装，spring-boot-starter-data-mongodb
+###### 对MongoTemplate进行封装，spring-boot-starter-data-mongodb
 注意：springboot-2.0以上版本
 
 
