@@ -56,6 +56,11 @@ public class MongoManagerImpl implements MongoManager {
     }
 
     @Override
+    public void save(Object obj, String collection) {
+        mongoTemplate.save(obj, collection);
+    }
+
+    @Override
     public <T> void update(T example) {
         this.query();
         Assert.notNull(query.getQueryObject().size() <= 0 ? null : "", "query condition must not be null!");
@@ -345,7 +350,7 @@ public class MongoManagerImpl implements MongoManager {
 
     @Override
     public MongoManager in(String key, Object value) {
-        return in(key,Arrays.asList(value));
+        return in(key, Arrays.asList(value));
     }
 
     @Override

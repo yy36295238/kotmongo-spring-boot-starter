@@ -16,6 +16,11 @@ public interface MongoManager extends BaseMongoManager {
     <T> void save(T example);
 
     /**
+     * 创建对象
+     */
+    void save(Object obj, String collection);
+
+    /**
      * 更新文档
      *
      * @param example
