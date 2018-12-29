@@ -21,47 +21,75 @@
 3. 示例
 
 ```java
+import com.example.yycode.demo.mongo.model.UserInfo;
+import kot.bootstarter.kotmongo.KotMongoTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
- @Autowired
- private KotMongoTemplate kotMongoTemplate;
+import java.util.Arrays;
+import java.util.Map;
 
-String collection = "userinfo";
+/**
+ * @author YangYu
+ */
+@RestController
+public class ExampleController {
 
-// 根据文档名称查询-数量
-final long countByCol = kotMongoTemplate.createMangoManager().count(collection);
-System.err.println("count by collection: " + countByCol);
+    @Autowired
+    private KotMongoTemplate kotMongoTemplate;
 
-// 根据实体对象查询-数量
-final long countByBean = kotMongoTemplate.createMangoManager().count(new UserInfo());
-System.err.println("count by bean: " + countByBean);
 
-// 根据文档名称查询-对象-Map
-final Map map = kotMongoTemplate.createMangoManager().findOne(collection);
-System.err.println("findOne by collection: " + map);
+    @RequestMapping("/all")
+    public String all() {
+        String collection = "userinfo";
+        final long countByCol = kotMongoTemplate.defaultSource().showSql().count(collection);
+        System.err.println("count by collection: " + countByCol);
 
-// 根据实体对象查询-对象
-final UserInfo one = kotMongoTemplate.createMangoManager().findOne(new UserInfo());
-System.err.println("findOne by bean: " + one.toString());
+        final long countByBean = kotMongoTemplate.defaultSource().count(new UserInfo());
+        System.err.println("count by bean: " + countByBean);
 
-// 条件分页查询        
-kotMongoTemplate.createMangoManager()
+        final Map map = kotMongoTemplate.defaultSource().findOne(collection);
+        System.err.println("findOne by collection: " + map);
+
+        final UserInfo one = kotMongoTemplate.defaultSource().findOne(new UserInfo());
+        System.err.println("findOne by bean: " + one.toString());
+
+        kotMongoTemplate.defaultSource()
                 .between("age", 0, 100) //范围查询
-                .lte("score1",100) // 小于
-                .gt("score1",0) // 大于
-                .orderBy("_id").direction(Sort.Direction.DESC) // 排序
-                .page(1,10) // 分页
-                .fields(Arrays.asList("userName","age","score1","score2")) // 返回指定字段
+                .lte("score1", 92) // 小于
+                .gt("score1", 90) // 大于
+                .orderBy("_id").direction(Sort.Direction.DESC)// 排序
+                .page(1, 10) // 分页
+                .fields(Arrays.asList("userName", "age", "score1", "score2")) // 返回指定字段
                 .showSql() // 显示执行命令（类似SQL）
-                .findPage(new UserInfo("zhangsan156")).forEach(u -> System.out.println(u.toString()));
-        
-// 更新文档        
-kotMongoTemplate.createMangoManager().eq("userName","zhangsan1").update(UserInfo.builder().userName("zhangsan125").build());
+                .findPage(new UserInfo("zhangsan156")).forEach(System.out::println);
 
-// 删除文档
-kotMongoTemplate.createMangoManager().eq("userName", "zhangsan2").delete(new UserInfo());
+        kotMongoTemplate.defaultSource().eq("userName", "zhangsan1").update(UserInfo.builder().userName("zhangsan125").build());
 
-// 删除集合
-kotMongoTemplate.createMangoManager().dropCollection(new UserInfo());
+        kotMongoTemplate.defaultSource().eq("userName", "zhangsan2").delete(new UserInfo());
+
+
+        // 更新文档
+        kotMongoTemplate.defaultSource().eq("userName", "zhangsan1").update(UserInfo.builder().userName("zhangsan125").build());
+        kotMongoTemplate.defaultSource().eq("userName", "zhangsan1").update(collection);
+
+        // 删除文档
+        kotMongoTemplate.defaultSource().eq("userName", "zhangsan2").delete(new UserInfo());
+        kotMongoTemplate.defaultSource().eq("userName", "zhangsan2").delete(collection);
+
+        // 删除集合
+        kotMongoTemplate.defaultSource().dropCollection(new UserInfo());
+        kotMongoTemplate.defaultSource().dropCollection(collection);
+
+        // 多数据源，第二数据源
+        final Map<String, Object> userInfo = kotMongoTemplate.secondSource().findOne(collection);
+        System.out.println(userInfo);
+
+        return "SUCCESS";
+    }
+}
 ```
 
 4. <font face="微软雅黑" color="green">多数据源</font>  
