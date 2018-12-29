@@ -64,8 +64,8 @@ kotMongoTemplate.createMangoManager().eq("userName", "zhangsan2").delete(new Use
 kotMongoTemplate.createMangoManager().dropCollection(new UserInfo());
 ```
 
-> 多数据源配置
-> 使用默认配置时可以不需要添加MongoConfig，如果使用多数据源时，参考如下配置，第二数据源必需用secondMongoTemplate不可更改名称，使用方式参考上demo
+4. 多数据源配置
+> 使用默认配置时可以不需要添加`MongoConfig`，如果使用多数据源时，参考如下配置，第二数据源必需用`secondMongoTemplate`不可更改名称，使用方式参考上demo
 
 ```java
 import com.mongodb.MongoClientURI;
