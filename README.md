@@ -63,3 +63,48 @@ kotMongoTemplate.createMangoManager().eq("userName", "zhangsan2").delete(new Use
 // 删除集合
 kotMongoTemplate.createMangoManager().dropCollection(new UserInfo());
 ```
+
+> 多数据源配置
+> 使用默认配置时可以不需要添加MongoConfig，如果使用多数据源时，参考如下配置，第二数据源必需用secondMongoTemplate不可更改名称，使用方式参考上demo
+
+```java
+import com.mongodb.MongoClientURI;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.data.mongodb.MongoDbFactory;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
+
+import java.net.UnknownHostException;
+
+/**
+ * @author yangyu
+ */
+@Configuration
+public class MongoConfig {
+
+    @Bean
+    @Primary
+    public MongoDbFactory mongoDbFactory() throws UnknownHostException {
+        return new SimpleMongoDbFactory(new MongoClientURI("mongodb://192.168.117.130:27017/yydb"));
+    }
+
+    @Bean(name = "mongoTemplate")
+    @Primary
+    public MongoTemplate mongoTemplate() throws Exception {
+        return new MongoTemplate(mongoDbFactory());
+    }
+
+    @Bean("secondMongoDbFactory")
+    public MongoDbFactory secondMongoDbFactory() throws UnknownHostException {
+        return new SimpleMongoDbFactory(new MongoClientURI("mongodb://192.168.117.131:27017/yydb"));
+    }
+
+    @Bean(name = "secondMongoTemplate")
+    public MongoTemplate secondMongoTemplate() throws Exception {
+        return new MongoTemplate(secondMongoDbFactory());
+    }
+}
+
+```
