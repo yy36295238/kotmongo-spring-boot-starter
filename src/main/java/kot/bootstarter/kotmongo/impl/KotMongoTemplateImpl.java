@@ -3,6 +3,7 @@ package kot.bootstarter.kotmongo.impl;
 import kot.bootstarter.kotmongo.KotMongoTemplate;
 import kot.bootstarter.kotmongo.MongoManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
@@ -16,14 +17,19 @@ public class KotMongoTemplateImpl implements KotMongoTemplate {
     @Autowired
     private MongoTemplate mongoTemplate;
 
+    @Autowired(required = false)
+    @Qualifier("secondMongoTemplate")
+    private MongoTemplate secondMongoTemplate;
+
     @Override
-    public MongoManager createMangoManager() {
+    public MongoManager defaultSource() {
         return new MongoManagerImpl(mongoTemplate);
     }
 
     @Override
-    public MongoTemplate mongoTemplate() {
-        return mongoTemplate;
+    public MongoManager secondSource() {
+        return new MongoManagerImpl(secondMongoTemplate);
     }
+
 
 }

@@ -76,7 +76,7 @@ public interface MongoManager extends BaseMongoManager {
      * @param collection
      * @return List<Map>
      */
-    Map findOne(String collection);
+    Map<String, Object> findOne(String collection);
 
     /**
      * 查询集合
