@@ -3,6 +3,8 @@ package kot.bootstarter.kotmongo.impl;
 import kot.bootstarter.kotmongo.MongoManager;
 import kot.bootstarter.kotmongo.util.ReflectionUtils;
 import org.bson.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.BasicQuery;
@@ -19,6 +21,11 @@ import java.util.*;
  */
 
 public class MongoManagerImpl implements MongoManager {
+
+    private static final Logger logger = LoggerFactory.getLogger(MongoManagerImpl.class);
+
+    private static final String EXAMPLE_NOT_NULL = "example must not be null!";
+    private static final String QUERY_NOT_NULL = "query condition must not be null!";
 
     private MongoTemplate mongoTemplate;
 
@@ -47,8 +54,6 @@ public class MongoManagerImpl implements MongoManager {
 
     /**
      * 创建对象
-     *
-     * @param example
      */
     @Override
     public <T> void save(T example) {
@@ -63,14 +68,14 @@ public class MongoManagerImpl implements MongoManager {
     @Override
     public <T> void update(T example) {
         this.query();
-        Assert.notNull(query.getQueryObject().size() <= 0 ? null : "", "query condition must not be null!");
+        Assert.notNull(query.getQueryObject().size() <= 0 ? null : "", QUERY_NOT_NULL);
         mongoTemplate.updateMulti(query, getUpdateByBean(example), example.getClass());
     }
 
     @Override
     public void update(Map<String, Object> map, String collection) {
         this.query();
-        Assert.notNull(query.getQueryObject().size() <= 0 ? null : "", "query condition must not be null!");
+        Assert.notNull(query.getQueryObject().size() <= 0 ? null : "", QUERY_NOT_NULL);
         map.forEach((k, v) -> update.set(k, v));
         mongoTemplate.updateMulti(query, update, collection);
     }
@@ -78,14 +83,15 @@ public class MongoManagerImpl implements MongoManager {
     @Override
     public <T> void delete(T example) {
         this.query(example);
-        Assert.notNull(query.getQueryObject().size() <= 0 ? null : "", "query condition must not be null!");
+        Assert.notNull(query.getQueryObject().size() <= 0 ? null : "", QUERY_NOT_NULL);
+        Assert.notNull(example, EXAMPLE_NOT_NULL);
         mongoTemplate.remove(query, example.getClass());
     }
 
     @Override
     public void delete(String collection) {
         this.query();
-        Assert.notNull(query.getQueryObject().size() <= 0 ? null : "", "query condition must not be null!");
+        Assert.notNull(query.getQueryObject().size() <= 0 ? null : "", QUERY_NOT_NULL);
         mongoTemplate.remove(query, collection);
     }
 
@@ -101,13 +107,11 @@ public class MongoManagerImpl implements MongoManager {
 
     /**
      * 查询对象
-     *
-     * @param example
-     * @return T
      */
     @SuppressWarnings({"unchecked"})
     @Override
     public <T> T findOne(T example) {
+        Assert.notNull(example, EXAMPLE_NOT_NULL);
         return (T) mongoTemplate.findOne(query(example), example.getClass());
     }
 
@@ -140,6 +144,7 @@ public class MongoManagerImpl implements MongoManager {
 
     @SuppressWarnings({"unchecked"})
     private <T> List<T> list(T example, boolean isPage) {
+        Assert.notNull(example, EXAMPLE_NOT_NULL);
         this.query(example);
         // 分页
         query = isPage ? query.skip(skip).limit(limit) : query;
@@ -151,6 +156,7 @@ public class MongoManagerImpl implements MongoManager {
      */
     @Override
     public <T> long count(T example) {
+        Assert.notNull(example, EXAMPLE_NOT_NULL);
         return mongoTemplate.count(query(example), example.getClass());
     }
 
@@ -165,7 +171,7 @@ public class MongoManagerImpl implements MongoManager {
     @Override
     public MongoManager showSql() {
         if (showSql) {
-            System.err.println("sql: " + query.toString());
+            logger.debug("mongo sql:{} ", query);
         }
         showSql = true;
         return this;
@@ -194,8 +200,6 @@ public class MongoManagerImpl implements MongoManager {
 
     /**
      * 根据bean生成query
-     *
-     * @param obj
      */
     private void getQueryByBean(Object obj) {
         ReflectionUtils.beanToMap(obj).forEach((k, v) -> {
@@ -207,8 +211,6 @@ public class MongoManagerImpl implements MongoManager {
 
     /**
      * 根据bean生成query
-     *
-     * @param obj
      */
     private Update getUpdateByBean(Object obj) {
         ReflectionUtils.beanToMap(obj).forEach((k, v) -> {
@@ -221,8 +223,6 @@ public class MongoManagerImpl implements MongoManager {
 
     /**
      * 返回指定字段
-     *
-     * @return Query
      */
     private MongoManagerImpl fieldsQuery() {
         if (fieldList == null) {
