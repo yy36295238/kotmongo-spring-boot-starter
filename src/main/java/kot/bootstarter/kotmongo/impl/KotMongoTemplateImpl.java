@@ -31,5 +31,10 @@ public class KotMongoTemplateImpl implements KotMongoTemplate {
         return new MongoManagerImpl(secondMongoTemplate);
     }
 
+    @Override
+    public MongoManager build(MongoTemplate mongoTemplate) {
+        return new MongoManagerImpl(mongoTemplate);
+    }
+
 
 }
