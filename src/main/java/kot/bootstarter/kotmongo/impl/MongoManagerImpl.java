@@ -171,7 +171,7 @@ public class MongoManagerImpl implements MongoManager {
     @Override
     public MongoManager showSql() {
         if (showSql) {
-            logger.debug("mongo sql:{} ", query);
+            logger.warn("mongo sql:{} ", query);
         }
         showSql = true;
         return this;
