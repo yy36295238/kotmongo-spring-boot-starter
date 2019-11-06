@@ -322,7 +322,7 @@ public class MongoManagerImpl implements MongoManager {
 
     @Override
     public MongoManager skip(Integer skip) {
-        this.skip = skip == null ? 0 : (skip - 1) * limit;
+        this.skip = skip == null ? 0 : skip;
         return this;
     }
 
@@ -335,6 +335,7 @@ public class MongoManagerImpl implements MongoManager {
     @Override
     public MongoManager page(Integer skip, Integer limit) {
         this.skip(skip).limit(limit);
+        this.skip = (skip - 1) * limit;
         return this;
     }
 
