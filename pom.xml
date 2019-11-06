@@ -6,7 +6,11 @@
     <groupId>com.yyself</groupId>
     <artifactId>kotmongo-spring-boot-starter</artifactId>
     <version>1.0.1</version>
+    <packaging>jar</packaging>
 
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>mongodb utils</description>
+    <url>http://www.yyself.com</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
