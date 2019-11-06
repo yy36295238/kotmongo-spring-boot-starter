@@ -1,5 +1,7 @@
 package kot.bootstarter.kotmongo;
 
+import org.springframework.data.mongodb.core.MongoTemplate;
+
 import java.util.List;
 import java.util.Map;
 
@@ -10,8 +12,6 @@ public interface MongoManager extends BaseMongoManager {
 
     /**
      * 创建对象
-     *
-     * @param example
      */
     <T> void save(T example);
 
@@ -19,6 +19,16 @@ public interface MongoManager extends BaseMongoManager {
      * 创建对象
      */
     void save(Object obj, String collection);
+
+    /**
+     * 创建对象
+     */
+    <T> void insert(T example);
+
+    /**
+     * 创建对象
+     */
+    void insert(Object obj, String collection);
 
     /**
      * 更新文档
@@ -92,6 +102,14 @@ public interface MongoManager extends BaseMongoManager {
      * @param example
      * @return List<T>
      */
+    <T> List<T> findPage(T example, Integer skip, Integer limit);
+
+    /**
+     * 查询集合
+     *
+     * @param example
+     * @return List<T>
+     */
     <T> List<T> list(T example);
 
     /**
@@ -113,5 +131,7 @@ public interface MongoManager extends BaseMongoManager {
     long count(String collection);
 
     MongoManager showSql();
+
+    MongoTemplate get();
 
 }

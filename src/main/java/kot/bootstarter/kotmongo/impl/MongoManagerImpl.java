@@ -20,12 +20,15 @@ import java.util.*;
  * @author yangyu
  */
 
+
+@SuppressWarnings({"unchecked"})
 public class MongoManagerImpl implements MongoManager {
 
     private static final Logger logger = LoggerFactory.getLogger(MongoManagerImpl.class);
 
     private static final String EXAMPLE_NOT_NULL = "example must not be null!";
     private static final String QUERY_NOT_NULL = "query condition must not be null!";
+    private static final String ID = "_id";
 
     private MongoTemplate mongoTemplate;
 
@@ -63,6 +66,16 @@ public class MongoManagerImpl implements MongoManager {
     @Override
     public void save(Object obj, String collection) {
         mongoTemplate.save(obj, collection);
+    }
+
+    @Override
+    public <T> void insert(T example) {
+        mongoTemplate.insert(example);
+    }
+
+    @Override
+    public void insert(Object obj, String collection) {
+        mongoTemplate.insert(obj, collection);
     }
 
     @Override
@@ -108,7 +121,6 @@ public class MongoManagerImpl implements MongoManager {
     /**
      * 查询对象
      */
-    @SuppressWarnings({"unchecked"})
     @Override
     public <T> T findOne(T example) {
         Assert.notNull(example, EXAMPLE_NOT_NULL);
@@ -122,19 +134,15 @@ public class MongoManagerImpl implements MongoManager {
 
     /**
      * 查询集合
-     *
-     * @param example
-     * @return List
      */
-    @SuppressWarnings({"unchecked"})
     @Override
     public <T> List<T> findPage(T example) {
-        return list(example, true);
+        return list(example);
     }
 
     @Override
-    public <T> List<T> list(T example) {
-        return list(example, false);
+    public <T> List<T> findPage(T example, Integer skip, Integer limit) {
+        return this.page(skip, limit).findPage(example);
     }
 
     @Override
@@ -142,12 +150,18 @@ public class MongoManagerImpl implements MongoManager {
         return mongoTemplate.find(query(), Map.class, collection);
     }
 
-    @SuppressWarnings({"unchecked"})
-    private <T> List<T> list(T example, boolean isPage) {
+
+    @Override
+    public <T> List<T> list(T example) {
         Assert.notNull(example, EXAMPLE_NOT_NULL);
         this.query(example);
         // 分页
-        query = isPage ? query.skip(skip).limit(limit) : query;
+        if (skip != null) {
+            query.skip(skip);
+        }
+        if (limit != null) {
+            query.limit(limit);
+        }
         return (List<T>) mongoTemplate.find(query, example.getClass());
     }
 
@@ -175,6 +189,11 @@ public class MongoManagerImpl implements MongoManager {
         }
         showSql = true;
         return this;
+    }
+
+    @Override
+    public MongoTemplate get() {
+        return this.mongoTemplate;
     }
 
     private Query query() {
@@ -296,8 +315,8 @@ public class MongoManagerImpl implements MongoManager {
     /**
      * 分页、排序
      */
-    private Integer skip = 0;
-    private Integer limit = 30;
+    private Integer skip;
+    private Integer limit;
     private String[] sortKey;
     private Sort.Direction direction;
 
@@ -309,14 +328,13 @@ public class MongoManagerImpl implements MongoManager {
 
     @Override
     public MongoManager limit(Integer limit) {
-        this.limit = limit;
+        this.limit = limit == null ? 30 : limit;
         return this;
     }
 
     @Override
     public MongoManager page(Integer skip, Integer limit) {
-        this.skip = skip == null ? 0 : (skip - 1) * limit;
-        this.limit = limit;
+        this.skip(skip).limit(limit);
         return this;
     }
 
@@ -425,6 +443,18 @@ public class MongoManagerImpl implements MongoManager {
         return this;
     }
 
+    @Override
+    public MongoManager orderByIdDesc() {
+        this.orderBy(ID).direction(Sort.Direction.DESC);
+        return this;
+    }
+
+    @Override
+    public MongoManager orderByIdAsc() {
+        this.orderBy(ID).direction(Sort.Direction.ASC);
+        return this;
+    }
+
     /**
      * 查询指定对象
      */
@@ -434,6 +464,15 @@ public class MongoManagerImpl implements MongoManager {
     public MongoManager fields(String field) {
         fieldList = fieldList == null ? new ArrayList<>() : fieldList;
         fieldList.add(field);
+        return this;
+    }
+
+    @Override
+    public MongoManager fields(String... fields) {
+        fieldList = fieldList == null ? new ArrayList<>() : fieldList;
+        if (fields != null) {
+            Collections.addAll(fieldList, fields);
+        }
         return this;
     }
 

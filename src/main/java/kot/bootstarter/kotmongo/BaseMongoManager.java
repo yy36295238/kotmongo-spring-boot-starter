@@ -1,6 +1,7 @@
 package kot.bootstarter.kotmongo;
 
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.Collection;
 import java.util.List;
@@ -14,6 +15,8 @@ public interface BaseMongoManager {
      * 返回指定字段
      */
     MongoManager fields(String field);
+
+    MongoManager fields(String... field);
 
     MongoManager fields(List<String> fields);
 
@@ -56,4 +59,8 @@ public interface BaseMongoManager {
     MongoManager like(String key, Object value);
 
     MongoManager between(String key, Object left, Object right);
+
+    MongoManager orderByIdDesc();
+
+    MongoManager orderByIdAsc();
 }
