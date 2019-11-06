@@ -127,7 +127,7 @@
 
     <scm>
         <tag>master</tag>
-        <connection>https://github.com/yy36295238/kotmybatis-spring-boot-starter</connection>
+        <connection>https://github.com/yy36295238/kotmongo-spring-boot-starter</connection>
         <developerConnection>http://www.yyself.com</developerConnection>
         <url>https://github.com/yy36295238/kotmongo-spring-boot-starter.git</url>
     </scm>
