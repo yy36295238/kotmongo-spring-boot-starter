@@ -150,6 +150,11 @@ public class MongoManagerImpl implements MongoManager {
         return mongoTemplate.find(query(), Map.class, collection);
     }
 
+    @Override
+    public List<Map> list(String collection) {
+        return listMap(collection);
+    }
+
 
     @Override
     public <T> List<T> list(T example) {

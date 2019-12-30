@@ -121,6 +121,14 @@ public interface MongoManager extends BaseMongoManager {
     List<Map> listMap(String collection);
 
     /**
+     * 查询集合 返回Map
+     *
+     * @param collection
+     * @return List<Map>
+     */
+    List<Map> list(String collection);
+
+    /**
      * 查询总数
      *
      * @param example
