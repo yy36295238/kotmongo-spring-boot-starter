@@ -155,13 +155,6 @@ public class MongoManagerImpl implements MongoManager {
     public <T> List<T> list(T example) {
         Assert.notNull(example, EXAMPLE_NOT_NULL);
         this.query(example);
-        // 分页
-        if (skip != null) {
-            query.skip(skip);
-        }
-        if (limit != null) {
-            query.limit(limit);
-        }
         return (List<T>) mongoTemplate.find(query, example.getClass());
     }
 
@@ -208,7 +201,18 @@ public class MongoManagerImpl implements MongoManager {
         if (showSql) {
             showSql();
         }
+        doPage();
         return query;
+    }
+
+    private void doPage() {
+        // 分页
+        if (skip != null) {
+            query.skip(skip);
+        }
+        if (limit != null) {
+            query.limit(limit);
+        }
     }
 
     private void sort() {
