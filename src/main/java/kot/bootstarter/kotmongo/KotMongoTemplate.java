@@ -20,4 +20,8 @@ public interface KotMongoTemplate {
      * 自定义数据源
      */
     MongoManager build(MongoTemplate mongoTemplate);
+
+    MongoTemplate get();
+
+    MongoTemplate getSecondMongoTemplate();
 }
